@@ -1,50 +1,57 @@
-import { Notify, Report } from 'notiflix';
+import { notifyWarning, notifyInfo, notifySuccess } from './notifyMasseges';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import { getImgApi } from './api-imgSearch';
+// import { getImgApi } from './api-imgSearch-then';
+import { getImgApi } from './api-imgSearch-async';
 import { cbFordrawPictures } from './cbForDraw-imgSearch';
 
 const formEl = document.querySelector('#search-form');
 const imgContainer = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-more');
+
 const optionToFeach = {
   pageNumber: 1,
   searchWord: '',
   numberOfPictures: 40,
 };
+let simpleLightbox = new SimpleLightbox('.gallery a');
 
 formEl.addEventListener('submit', feachPictures);
 loadMoreBtn.addEventListener('click', feachMorePictures);
 
-function feachPictures(event) {
+async function feachPictures(event) {
   event.preventDefault();
+  loadMoreBtn.classList.add('visually-hidden');
   imgContainer.innerHTML = '';
   optionToFeach.pageNumber = 1;
   optionToFeach.searchWord = event.target.elements.searchQuery.value;
-  getImgApi(optionToFeach).then(data => {
-    drawPictures(data);
-    notifySuccess(data);
-  });
+
+  const respons = await getImgApi(optionToFeach);
+
+  if (respons.totalHits >= optionToFeach.numberOfPictures) {
+    notifySuccess(respons);
+  }
+  drawPictures(respons);
 }
-function feachMorePictures(event) {
+async function feachMorePictures() {
   optionToFeach.pageNumber += 1;
-  getImgApi(optionToFeach).then(data => {
-    drawPictures(data);
-    smoothScroll();
-  });
+  const respons = await getImgApi(optionToFeach);
+  drawPictures(respons);
+  smoothScroll();
 }
 
 function drawPictures(data) {
   const { hits: pictures, totalHits } = data;
   const { pageNumber, numberOfPictures } = optionToFeach;
   if (pictures.length === 0) {
+    loadMoreBtn.classList.add('visually-hidden');
     notifyInfo();
     return;
   }
   loadMoreBtn.classList.add('visually-hidden');
   const picturesElements = pictures.map(cbFordrawPictures).join('');
   imgContainer.insertAdjacentHTML('beforeend', picturesElements);
-  new SimpleLightbox('.gallery a').refresh();
+  simpleLightbox.refresh();
 
   if (totalHits <= pageNumber * numberOfPictures) {
     notifyWarning();
@@ -53,30 +60,6 @@ function drawPictures(data) {
   loadMoreBtn.classList.remove('visually-hidden');
 }
 
-function notifyWarning() {
-  Notify.warning("We're sorry, but you've reached the end of search results.", {
-    ID: 'MKA',
-    timeout: 5000,
-    showOnlyTheLastOne: true,
-    position: 'right-bottom',
-    fontSize: '18px',
-  });
-}
-function notifyInfo() {
-  Report.info(
-    'Ooops!!!',
-    'Sorry, there are no images matching your search query. Please try again.',
-    'Ok'
-  );
-}
-function notifySuccess(data) {
-  Notify.success(`Hooray! We found ${data.totalHits} images.`, {
-    position: 'right-top',
-    timeout: 5000,
-    showOnlyTheLastOne: true,
-    fontSize: '18px',
-  });
-}
 function smoothScroll() {
   const { height: cardHeight } =
     imgContainer.firstElementChild.getBoundingClientRect();

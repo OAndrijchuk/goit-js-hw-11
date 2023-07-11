@@ -1,0 +1,24 @@
+.scroll-to-top{
+    position: fixed;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    bottom: 20px;
+    right: 20px;
+    cursor: pointer;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 84px;
+    opacity: .9;
+}
+.scroll-to-top:before {
+    right: -100px;
+    border-right: 100px solid transparent;
+    border-top: 100px solid #2D6B9F;
+
+}
+.unvisually{
+    display: none;
+}

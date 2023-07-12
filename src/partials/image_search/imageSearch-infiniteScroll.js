@@ -31,36 +31,44 @@ const observer = new IntersectionObserver(feachMorePictures, optionsToObserver);
 // ===========================================
 
 async function feachPictures(event) {
-  event.preventDefault();
-  observer.unobserve(observerTarget);
-  imgContainer.innerHTML = '';
-  optionToFeach.pageNumber = 1;
-  optionToFeach.searchWord = event.target.elements.searchQuery.value;
+  try {
+    event.preventDefault();
+    observer.unobserve(observerTarget);
+    imgContainer.innerHTML = '';
+    optionToFeach.pageNumber = 1;
+    optionToFeach.searchWord = event.target.elements.searchQuery.value;
 
-  const respons = await getImgApi(optionToFeach);
-  drawPictures(respons);
-  const { totalHits, hits } = respons;
-  if (totalHits > optionToFeach.numberOfPictures) {
-    observer.observe(observerTarget);
-    notifySuccess(respons);
-  } else if (hits.length) {
-    notifyWarning();
-    notifySuccess(respons);
-  } else {
-    notifyInfo();
+    const respons = await getImgApi(optionToFeach);
+    drawPictures(respons);
+    const { totalHits, hits } = respons;
+    if (totalHits > optionToFeach.numberOfPictures) {
+      observer.observe(observerTarget);
+      notifySuccess(respons);
+    } else if (hits.length) {
+      notifyWarning();
+      notifySuccess(respons);
+    } else {
+      notifyInfo();
+    }
+  } catch (err) {
+    console.log(err);
   }
 }
 
 async function feachMorePictures(entries, observer) {
-  if (entries[0].isIntersecting) {
-    optionToFeach.pageNumber += 1;
-    const respons = await getImgApi(optionToFeach);
-    const { pageNumber, numberOfPictures } = optionToFeach;
-    if (respons.totalHits <= pageNumber * numberOfPictures) {
-      notifyWarning();
-      observer.unobserve(observerTarget);
+  try {
+    if (entries[0].isIntersecting) {
+      optionToFeach.pageNumber += 1;
+      const respons = await getImgApi(optionToFeach);
+      const { pageNumber, numberOfPictures } = optionToFeach;
+      if (respons.totalHits <= pageNumber * numberOfPictures) {
+        notifyWarning();
+        observer.unobserve(observerTarget);
+      }
+      drawPictures(respons);
     }
-    drawPictures(respons);
+  } catch (err) {
+    console.log(err);
   }
 }
 

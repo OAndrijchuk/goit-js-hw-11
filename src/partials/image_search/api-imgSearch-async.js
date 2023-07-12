@@ -23,6 +23,7 @@ export async function getImgApi({ pageNumber, searchWord, numberOfPictures }) {
     }
     return respons.data;
   } catch (err) {
+    console.log(err);
     notifyFailure();
   }
 }

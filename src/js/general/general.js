@@ -45,7 +45,7 @@ async function feachPictures(event) {
     showLoader();
     imgContainer.innerHTML = '';
     optionToFeach.pageNumber = 1;
-    optionToFeach.searchWord = event.target.elements.searchQuery.value;
+    optionToFeach.searchWord = event.target.elements.searchQuery.value.trim();
     const respons = await getImgApi(optionToFeach);
     drawPictures(respons);
 

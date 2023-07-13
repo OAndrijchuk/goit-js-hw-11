@@ -14,9 +14,14 @@ const observerTarget = document.querySelector('#infinity-sckroll-point');
 const loadMoreBtn = document.querySelector('.load-more');
 const radioContainerEl = document.querySelector('.tabs');
 
-formEl.addEventListener('submit', feachPictures);
-radioContainerEl.addEventListener('change', () => {
-  formEl.requestSubmit();
+formEl.addEventListener('submit', event => {
+  feachPictures(event);
+  // if (radioContainerEl.children.radioTwo.checked) {
+  //   feachPicturesInfinite(event);
+  // }
+  // if (radioContainerEl.children.radioOne.checked) {
+  //   feachPicturesBtn(event);
+  // }
 });
 loadMoreBtn.addEventListener('click', feachMorePicturesBtn);
 // ==========================================
@@ -71,9 +76,48 @@ async function feachPictures(event) {
 }
 
 // ============================================
+
+// async function feachPicturesInfinite(event) {
+//   try {
+//     event.preventDefault();
+//     observer.unobserve(observerTarget);
+//     loadMoreBtn.classList.add('visually-hidden');
+//     showLoader();
+//     imgContainer.innerHTML = '';
+//     optionToFeach.pageNumber = 1;
+//     optionToFeach.searchWord = event.target.elements.searchQuery.value;
+//     const respons = await getImgApi(optionToFeach);
+//     drawPictures(respons);
+
+//     const { totalHits, hits } = respons;
+//     if (totalHits > optionToFeach.numberOfPictures) {
+//       observer.observe(observerTarget);
+//       notifySuccess(respons);
+//     } else if (hits.length) {
+//       notifyWarning();
+//       notifySuccess(respons);
+//     } else {
+//       notifyInfo();
+//     }
+//   } catch (err) {
+//     console.log(err);
+//   } finally {
+//     hideLoader();
+//   }
+// }
+
 async function feachMorePicturesInfinite(entries, observer) {
   try {
     if (entries[0].isIntersecting) {
+      // optionToFeach.pageNumber += 1;
+      // const respons = await getImgApi(optionToFeach);
+      // const { pageNumber, numberOfPictures } = optionToFeach;
+      // if (respons.totalHits <= pageNumber * numberOfPictures) {
+      //   notifyWarning();
+      //   observer.unobserve(observerTarget);
+      //   loadMoreBtn.classList.add('visually-hidden');
+      // }
+      // drawPictures(respons);
       feachMorePictures(observer);
     }
   } catch (err) {
@@ -81,8 +125,46 @@ async function feachMorePicturesInfinite(entries, observer) {
   }
 }
 
+// async function feachPicturesBtn(event) {
+//   try {
+//     event.preventDefault();
+//     observer.unobserve(observerTarget);
+//     loadMoreBtn.classList.add('visually-hidden');
+//     showLoader();
+//     imgContainer.innerHTML = '';
+//     optionToFeach.pageNumber = 1;
+//     optionToFeach.searchWord = event.target.elements.searchQuery.value;
+//     const respons = await getImgApi(optionToFeach);
+//     drawPictures(respons);
+
+//     const { totalHits, hits } = respons;
+//     if (totalHits > optionToFeach.numberOfPictures) {
+//       loadMoreBtn.classList.remove('visually-hidden');
+//       notifySuccess(respons);
+//     } else if (hits.length) {
+//       notifyWarning();
+//       notifySuccess(respons);
+//     } else {
+//       notifyInfo();
+//     }
+//   } catch (err) {
+//     console.log(err);
+//   } finally {
+//     hideLoader();
+//   }
+// }
+
 async function feachMorePicturesBtn() {
   try {
+    // optionToFeach.pageNumber += 1;
+    // const respons = await getImgApi(optionToFeach);
+    // const { pageNumber, numberOfPictures } = optionToFeach;
+    // if (respons.totalHits <= pageNumber * numberOfPictures) {
+    //   notifyWarning();
+    //   loadMoreBtn.classList.add('visually-hidden');
+    //   observer.unobserve(observerTarget);
+    // }
+    // drawPictures(respons);
     feachMorePictures();
     smoothScroll();
   } catch (err) {
